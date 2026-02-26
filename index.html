@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js House with Pan Controls</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <script>
+        // Create scene
+        const scene = new THREE.Scene();
+
+        // Create camera
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 8);
+
+        // Create renderer
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Add OrbitControls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enablePan = true;
+        controls.enableZoom = true;
+        controls.enableRotate = true;
+
+        // Add directional light
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+
+        // Add ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+
+        // Create walls with new colors
+        const backWall = new THREE.Mesh(new THREE.BoxGeometry(10, 5, 0.2), new THREE.MeshStandardMaterial({ color: 0xffa500 })); // Orange
+        backWall.position.set(0, 2.5, -5);
+        scene.add(backWall);
+
+        const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, 5, 10), new THREE.MeshStandardMaterial({ color: 0x87ceeb })); // Sky Blue
+        leftWall.position.set(-5, 2.5, 0);
+        scene.add(leftWall);
+
+        const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.2, 5, 10), new THREE.MeshStandardMaterial({ color: 0x8a2be2 })); // Blue Violet
+        rightWall.position.set(5, 2.5, 0);
+        scene.add(rightWall);
+
+        // Create floor
+        const floor = new THREE.Mesh(new THREE.BoxGeometry(10, 0.2, 10), new THREE.MeshStandardMaterial({ color: 0x888888 }));
+        floor.position.set(0, 0, 0);
+        scene.add(floor);
+
+        // Create ceiling
+        const ceiling = new THREE.Mesh(new THREE.BoxGeometry(10, 0.2, 10), new THREE.MeshStandardMaterial({ color: 0xaaaaaa }));
+        ceiling.position.set(0, 5, 0);
+        scene.add(ceiling);
+
+        // Create a simple table
+        const tableTop = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 1), new THREE.MeshStandardMaterial({ color: 0x654321 }));
+        tableTop.position.set(0, 1, 0);
+        scene.add(tableTop);
+
+        const legMaterial = new THREE.MeshStandardMaterial({ color: 0x3d2b1f });
+        for (let x = -0.9; x <= 0.9; x += 1.8) {
+            for (let z = -0.4; z <= 0.4; z += 0.8) {
+                const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1, 0.1), legMaterial);
+                leg.position.set(x, 0.5, z);
+                scene.add(leg);
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handling
+        window.addEventListener("resize", () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
